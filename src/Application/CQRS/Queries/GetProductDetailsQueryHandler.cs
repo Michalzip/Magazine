@@ -53,6 +53,7 @@ namespace Application.Queries
                                     p."Name"                       AS Name,
                                     p."Ean"                        AS Ean,
                                     p."ProducerName"               AS ProducerName,
+                                    p."DefaultImage"               AS DefaultImage,
                                     p."Category"                   AS Category,
                                     i."Quantity"                   AS Quantity,
                                     i."Unit"                       AS Unit,

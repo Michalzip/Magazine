@@ -31,6 +31,9 @@ namespace Domain
         [Name("shipping")]
         [TypeConverter(typeof(IntConverter))]
         public int Shipping { get; set; }
+        
+        [Name("default_image")]
+        public string? DefaultImage { get; set; } = string.Empty;
 
         [Name("is_wire")]
         [NotMapped]

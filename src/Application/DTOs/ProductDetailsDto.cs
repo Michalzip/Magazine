@@ -7,6 +7,7 @@ namespace Application.DTOs
         public string Ean { get; set; } = string.Empty;
         public string ProducerName { get; set; } = string.Empty;
         public string Category { get; set; } = string.Empty;
+        public string DefaultImage { get; set; } = string.Empty;
 
         // z Inventory
         public int Quantity { get; set; }
