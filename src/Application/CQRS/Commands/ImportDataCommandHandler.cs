@@ -152,7 +152,6 @@ namespace Application.Commands
             // Wczytanie wszystkich cen z pliku CSV
             var allPrices = _csvService.ReadCsv<Price>(pricesPath, ",", false);
             _logger.LogInformation("Wczytano {Count} cen.", allPrices.Count());
-            var filteredPrices = allPrices.Where(p => validProductSkus.Contains(p.Sku)).ToList();
             // Zapis cen do bazy
             await _priceRepository.BulkInsertAsync(allPrices);
             _logger.LogInformation("Zapisano ceny do bazy danych.");
