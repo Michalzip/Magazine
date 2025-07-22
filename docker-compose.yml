@@ -1,0 +1,12 @@
+﻿services:
+  magazine:
+    image: magazine
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+  magazine-1:
+    image: magazine-1
+    build:
+      context: .
+      dockerfile: Dockerfile
