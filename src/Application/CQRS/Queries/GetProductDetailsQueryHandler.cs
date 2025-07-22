@@ -17,8 +17,10 @@ namespace Application.Queries
         private readonly IRepository<Product> _productRepository;
         private readonly IRepository<Inventory> _inventoryRepository;
         private readonly IRepository<Price> _priceRepository;
+
         // Mapper do mapowania encji na DTO (nie jest używany w tym handlerze, bo mapowanie robi Dapper, ale może być przydatny)
         private readonly IMapper _mapper;
+
         // Połączenie do bazy danych wykorzystywane przez Dappera
         private readonly IDbConnection _dbConnection;
 
@@ -47,20 +49,19 @@ namespace Application.Queries
             // Zapytanie SQL pobierające szczegóły produktu, stan magazynowy i cenę na podstawie SKU
             // Użycie JOIN-ów zapewnia, że zwracane są tylko produkty, które mają powiązane rekordy w każdej z tabel
             var sql = $"""
-                    SELECT 
-                        p."Name" AS Name,
-                        p."Ean" AS Ean,
-                        p."ProducerName" AS ProducerName,
-                        p."Category" AS Category,
-                        p."DefaultImage" AS DefaultImage,
-                        i."Quantity" AS Quantity,
-                        i."Unit" AS Unit,
-                        pr."NetPrice" AS NetPrice,
-                        i."ShippingCost" AS ShippingCost
-                    FROM "Products" p
-                    INNER JOIN "Inventories" i ON p."Sku" = i."Sku"
-                    INNER JOIN "Prices" pr ON p."Sku" = pr."Sku"
-                    WHERE p."Sku" = @Sku
+                                SELECT
+                                    p."Name"                       AS Name,
+                                    p."Ean"                        AS Ean,
+                                    p."ProducerName"               AS ProducerName,
+                                    p."Category"                   AS Category,
+                                    i."Quantity"                   AS Quantity,
+                                    i."Unit"                       AS Unit,
+                                    i."ShippingCost"               AS ShippingCost,
+                                    pr."NetUnitPriceAfterDiscount" AS NetUnitPrice
+                                FROM "Products"   p
+                                INNER JOIN "Inventories" i ON p."Sku" = i."Sku"
+                                INNER JOIN "Prices"      pr ON p."Sku" = pr."Sku"
+                                WHERE p."Sku" = @Sku;
                 """;
 
             // Pobranie danych z bazy i automatyczne mapowanie na DTO przez Dappera

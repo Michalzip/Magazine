@@ -9,9 +9,6 @@ namespace Domain
         [Ignore]
         public int Id { get; set; }
 
-        [Name("product_id")]
-        public string ProductId { get; set; }
-
         [Name("sku")]
         public string Sku { get; set; } = string.Empty;
 
@@ -22,14 +19,11 @@ namespace Domain
         [TypeConverter(typeof(IntConverter))]
         public int Quantity { get; set; }
 
-        [Name("manufacturer_name")]
-        public string Manufacturer { get; set; } = string.Empty;
+        [Name("shipping_cost")]
+        [TypeConverter(typeof(DecimalConverter))]
+        public decimal? ShippingCost { get; set; }
 
         [Name("shipping")]
         public string Shipping { get; set; }
-
-        [Name("shipping_cost")]
-        [CsvHelper.Configuration.Attributes.TypeConverter(typeof(DecimalConverter))]
-        public decimal? ShippingCost { get; set; }
     }
 }

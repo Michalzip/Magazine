@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using CsvHelper.Configuration.Attributes;
 using CsvHelper.TypeConversion;
@@ -9,11 +10,8 @@ namespace Domain
     public class Product
     {
         [Ignore]
-        //zrobilem wlasne id zeby nie bylo przypadku gdy dwa systemy serwisow ktore integrujemy wygeneowaly te same InteralProductId, mała szansa ale zawsze jakas jest.
+        [Key]
         public int Id { get; set; }
-
-        [Name("ID")]
-        public string InteralProductId { get; set; }
 
         [Name("SKU")]
         public string Sku { get; set; } = string.Empty;
@@ -30,23 +28,13 @@ namespace Domain
         [Name("category")]
         public string Category { get; set; } = string.Empty;
 
-        [Name("is_wire")]
-        [TypeConverter(typeof(BoolFromZeroOneConverter))]
-        public bool IsWire { get; set; }
-
         [Name("shipping")]
         [TypeConverter(typeof(IntConverter))]
         public int Shipping { get; set; }
 
-        [Name("available")]
+        [Name("is_wire")]
+        [NotMapped]
         [TypeConverter(typeof(BoolFromZeroOneConverter))]
-        public bool? Available { get; set; }
-
-        [Name("is_vendor")]
-        [TypeConverter(typeof(BoolFromZeroOneConverter))]
-        public bool? IsVendor { get; set; }
-
-        [Name("default_image")]
-        public string? DefaultImage { get; set; } = string.Empty;
+        public bool? IsWire { get; set; }
     }
 }

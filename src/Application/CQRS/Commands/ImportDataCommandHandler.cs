@@ -22,14 +22,19 @@ namespace Application.Commands
         private readonly IRepository<Product> _productRepository;
         private readonly IRepository<Inventory> _inventoryRepository;
         private readonly IRepository<Price> _priceRepository;
+
         // Serwis do czytania plików CSV
         private readonly ICsvService _csvService;
+
         // Konfiguracja aplikacji (np. URL-e plików CSV)
         private readonly IConfiguration _configuration;
+
         // Serwis do pobierania plików przez HTTP
         private readonly IHttpClientFactoryService _httpClientFactoryService;
+
         // Serwis do zapisu plików na dysku
         private readonly IFileStorageService _fileStorageService;
+
         // Logger do rejestrowania przebiegu importu
         private readonly ILogger<ImportDataCommandHandler> _logger;
 
@@ -86,7 +91,9 @@ namespace Application.Commands
             // Wczytanie wszystkich produktów z pliku CSV
             var allProducts = _csvService.ReadCsv<Product>(productsPath, ";", true);
             // Filtrowanie: tylko produkty, które NIE są przewodami i mają czas wysyłki <= 24h
-            var filteredProducts = allProducts.Where(p => !p.IsWire && p.Shipping <= 24).ToList();
+            var filteredProducts = allProducts
+                .Where(p => !p.IsWire.GetValueOrDefault() && p.Shipping <= 24)
+                .ToList();
 
             _logger.LogInformation(
                 "Wczytano {Count} produktów (po filtrze).",
@@ -113,13 +120,14 @@ namespace Application.Commands
             var allProducts = _csvService.ReadCsv<Product>(productsPath, ";", true);
             var allInventories = _csvService.ReadCsv<Inventory>(inventoryPath, ",", true);
             // Filtrowanie: tylko stany magazynowe dla produktów z czasem wysyłki <= 24h
-            var filteredProductIds = allProducts
+            var filteredSkus = allProducts
                 .Where(p => p.Shipping <= 24)
-                .Select(x => x.InteralProductId)
+                .Select(p => p.Sku)
                 .ToHashSet();
 
+            // 2) Filtrowanie stanów magazynowych po SKU
             var filteredInventories = allInventories
-                .Where(inv => filteredProductIds.Contains(inv.ProductId))
+                .Where(inv => filteredSkus.Contains(inv.Sku))
                 .ToList();
 
             _logger.LogInformation(
@@ -144,6 +152,7 @@ namespace Application.Commands
             // Wczytanie wszystkich cen z pliku CSV
             var allPrices = _csvService.ReadCsv<Price>(pricesPath, ",", false);
             _logger.LogInformation("Wczytano {Count} cen.", allPrices.Count());
+            var filteredPrices = allPrices.Where(p => validProductSkus.Contains(p.Sku)).ToList();
             // Zapis cen do bazy
             await _priceRepository.BulkInsertAsync(allPrices);
             _logger.LogInformation("Zapisano ceny do bazy danych.");

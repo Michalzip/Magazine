@@ -47,7 +47,17 @@ Importuje dane z plików CSV do bazy. Ścieżki do plików konfigurowalne w `app
 ```
 GET /api/v1/product/{sku}
 ```
-Zwraca szczegóły produktu po SKU (nazwa, EAN, producent, kategoria, zdjęcie, stan magazynowy, jednostka, cena netto, koszt dostawy).
+Zwraca szczegóły produktu po SKU.
+
+### Dodatkowe problemy z danymi
+
+Zauważyłem, że w pliku z cenami (`Prices.csv`) pobierane są wszystkie produkty, natomiast w pliku z magazynem (`Inventory.csv`) znajdują się tylko produkty z czasem wysyłki 24h, a w tabeli produktów (`Products`) znajdują się produkty, które nie są bezprzewodowe i mają czas wysyłki 24h. Powoduje to, że w tabelach pojawiają się niepotrzebne dane, które nie są spójne pomiędzy źródłami.
+
+### Znane ograniczenia importu danych
+
+Obecnie endpoint importu CSV nie posiada mechanizmu deduplikacji – ponowne wywołanie importu spowoduje powielenie tych samych danych w bazie. W produkcyjnym systemie należałoby to obsłużyć (np. przez upsert, transakcje, sprawdzanie unikalności po kluczach biznesowych lub czyszczenie tabel przed importem).
+
+Zostawiłem to celowo niezaimplementowane, ponieważ sposób rozwiązania zależy od wymagań biznesowych (czy import ma nadpisywać, ignorować duplikaty, czy może wersjonować dane).
 
 ## Konfiguracja
 W pliku `appsettings.json`:
@@ -72,7 +82,7 @@ dotnet run
 
 ### 2. Uruchomienie bazy danych PostgreSQL
 
-Możesz uruchomić lokalnie PostgreSQL np. przez Docker:
+Można uruchomić lokalnie PostgreSQL np. przez Docker:
 ```
 docker run --name magazine-postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=postgres -p 5432:5432 -d postgres:15
 ```

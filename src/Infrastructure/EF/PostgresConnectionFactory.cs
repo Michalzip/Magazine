@@ -4,7 +4,6 @@ using Npgsql;
 
 namespace Infrastructure.Data
 {
-
     public class PostgresConnectionFactory
     {
         // Connection string do bazy, pobierany z konfiguracji
