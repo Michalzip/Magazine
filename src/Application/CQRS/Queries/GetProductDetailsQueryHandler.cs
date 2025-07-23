@@ -13,30 +13,12 @@ namespace Application.Queries
     public class GetProductDetailsQueryHandler
         : IRequestHandler<GetProductDetailsQuery, ProductDetailsDto>
     {
-        // Repozytoria do ewentualnego rozszerzenia logiki (nie są używane w tym handlerze, ale mogą być przydatne w przyszłości)
-        private readonly IRepository<Product> _productRepository;
-        private readonly IRepository<Inventory> _inventoryRepository;
-        private readonly IRepository<Price> _priceRepository;
-
-        // Mapper do mapowania encji na DTO (nie jest używany w tym handlerze, bo mapowanie robi Dapper, ale może być przydatny)
-        private readonly IMapper _mapper;
-
         // Połączenie do bazy danych wykorzystywane przez Dappera
         private readonly IDbConnection _dbConnection;
 
         // Konstruktor z wstrzykiwaniem zależności (DI)
-        public GetProductDetailsQueryHandler(
-            IRepository<Product> productRepository,
-            IRepository<Inventory> inventoryRepository,
-            IRepository<Price> priceRepository,
-            IMapper mapper,
-            IDbConnection dbConnection
-        )
+        public GetProductDetailsQueryHandler(IDbConnection dbConnection)
         {
-            _productRepository = productRepository;
-            _inventoryRepository = inventoryRepository;
-            _priceRepository = priceRepository;
-            _mapper = mapper;
             _dbConnection = dbConnection;
         }
 
